@@ -1,22 +1,45 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const MyForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    data: "",
-  });
+  const dispatch = useDispatch();
+  const [poetname, setpoetName] = useState("");
+  const [poetdata, setPoetData] = useState("");
+  //   const [formData, setFormData] = useState({
+  //     poet: "",
+  //     data: "",
+  //   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  //   const handleChange = (e) => {
+  //     setFormData({
+  //       ...formData,
+  //       [e.target.name]: e.target.value,
+  //     });
+  //   };
+
+  const handleSend = () => {
+    axios
+      .post("http://localhost:5000/api/v1/createPoetry", {
+        poet: poetname,
+        data: poetdata,
+      })
+      .then((response) => {
+        console.log("Data sent successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+
+    setpoetName("");
+    setPoetData("");
   };
-
   const handleSubmit = (e) => {
+    console.log(poetdata, poetname);
     e.preventDefault();
-    // Add your form submission logic here
-    console.log("Form submitted:", formData);
+    handleSend();
+
+    console.log("Form submitted:");
   };
 
   return (
@@ -36,8 +59,8 @@ const MyForm = () => {
             type="text"
             id="name"
             name="name"
-            value={formData.name}
-            onChange={handleChange}
+            value={poetname}
+            onChange={(e) => setpoetName(e.target.value)}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             placeholder="Enter your Poet name"
             required
@@ -54,8 +77,8 @@ const MyForm = () => {
             type="text"
             id="data"
             name="data"
-            value={formData.data}
-            onChange={handleChange}
+            value={poetdata}
+            onChange={(e) => setPoetData(e.target.value)}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             placeholder="Enter your Poetry"
             required
